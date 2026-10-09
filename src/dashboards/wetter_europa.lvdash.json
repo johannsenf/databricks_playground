@@ -4,31 +4,29 @@
       "name": "ds_wetter",
       "displayName": "Wetter Europa (Tage)",
       "queryLines": [
-        "SELECT 'Historie' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "SELECT 'Ist' AS wertart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
         "  latitude, longitude,\n",
         "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
-        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
-        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
-        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'ohne' END AS niederschlag_art,\n",
         "  CAST(NULL AS DOUBLE) AS niederschlag_wahrsch,\n",
         "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
-        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
-        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct,\n",
         "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
         "  ROUND(pressure_msl_avg / 100.0, 1) AS luftdruck_hpa\n",
         "FROM historical_daily_calendar_metric\n",
         "WHERE country_code IN ('de','es','fr','gb','gr','is','nl','rs','ru','se','tr') AND date < (SELECT MIN(date) FROM forecast_daily_calendar_metric)\n",
         "UNION ALL\n",
-        "SELECT 'Prognose' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "SELECT 'Prognose' AS wertart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
         "  latitude, longitude,\n",
         "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
-        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
-        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
-        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'ohne' END AS niederschlag_art,\n",
         "  precipitation_probability / 100.0 AS niederschlag_wahrsch,\n",
         "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
-        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
-        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct,\n",
         "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
         "  CAST(NULL AS DOUBLE) AS luftdruck_hpa\n",
         "FROM forecast_daily_calendar_metric\n",
@@ -39,31 +37,29 @@
       "name": "ds_staedte",
       "displayName": "Wetter Europa (Städtevergleich)",
       "queryLines": [
-        "SELECT 'Historie' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "SELECT 'Ist' AS wertart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
         "  latitude, longitude,\n",
         "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
-        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
-        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
-        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'ohne' END AS niederschlag_art,\n",
         "  CAST(NULL AS DOUBLE) AS niederschlag_wahrsch,\n",
         "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
-        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
-        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct,\n",
         "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
         "  ROUND(pressure_msl_avg / 100.0, 1) AS luftdruck_hpa\n",
         "FROM historical_daily_calendar_metric\n",
         "WHERE country_code IN ('de','es','fr','gb','gr','is','nl','rs','ru','se','tr') AND date < (SELECT MIN(date) FROM forecast_daily_calendar_metric)\n",
         "UNION ALL\n",
-        "SELECT 'Prognose' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "SELECT 'Prognose' AS wertart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
         "  latitude, longitude,\n",
         "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
-        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
-        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
-        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'ohne' END AS niederschlag_art,\n",
         "  precipitation_probability / 100.0 AS niederschlag_wahrsch,\n",
         "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
-        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
-        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct,\n",
         "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
         "  CAST(NULL AS DOUBLE) AS luftdruck_hpa\n",
         "FROM forecast_daily_calendar_metric\n",
@@ -99,7 +95,7 @@
             "name": "untertitel",
             "multilineTextboxSpec": {
               "lines": [
-                "Tageshistorie (27.06.–11.07.2024) und 15-Tage-Prognose (ab 12.07.2024) für 11 europäische Großstädte · Quelle: `samples.accuweather` · Einheiten: °C, mm, km/h, hPa, h\n"
+                "Ist vom 27.06. bis 11.07.2024, Prognose vom 12.07. bis 26.07.2024, für 11 europäische Großstädte\n"
               ]
             }
           },
@@ -167,29 +163,29 @@
         },
         {
           "widget": {
-            "name": "filter_datenart",
+            "name": "filter_wertart",
             "queries": [
               {
-                "name": "filter_datenart_ds_wetter",
+                "name": "filter_wertart_ds_wetter",
                 "query": {
                   "datasetName": "ds_wetter",
                   "fields": [
                     {
-                      "name": "datenart",
-                      "expression": "`datenart`"
+                      "name": "wertart",
+                      "expression": "`wertart`"
                     }
                   ],
                   "disaggregated": false
                 }
               },
               {
-                "name": "filter_datenart_ds_staedte",
+                "name": "filter_wertart_ds_staedte",
                 "query": {
                   "datasetName": "ds_staedte",
                   "fields": [
                     {
-                      "name": "datenart",
-                      "expression": "`datenart`"
+                      "name": "wertart",
+                      "expression": "`wertart`"
                     }
                   ],
                   "disaggregated": false
@@ -202,20 +198,20 @@
               "encodings": {
                 "fields": [
                   {
-                    "fieldName": "datenart",
-                    "displayName": "Datenart",
-                    "queryName": "filter_datenart_ds_wetter"
+                    "fieldName": "wertart",
+                    "displayName": "Wertart",
+                    "queryName": "filter_wertart_ds_wetter"
                   },
                   {
-                    "fieldName": "datenart",
-                    "displayName": "Datenart",
-                    "queryName": "filter_datenart_ds_staedte"
+                    "fieldName": "wertart",
+                    "displayName": "Wertart",
+                    "queryName": "filter_wertart_ds_staedte"
                   }
                 ]
               },
               "frame": {
                 "showTitle": true,
-                "title": "Datenart"
+                "title": "Wertart"
               }
             }
           },
@@ -359,7 +355,7 @@
               "encodings": {
                 "value": {
                   "fieldName": "sum(niederschlag_mm)",
-                  "displayName": "Niederschlag gesamt",
+                  "displayName": "Niederschlag",
                   "format": {
                     "type": "number-plain",
                     "decimalPlaces": {
@@ -372,7 +368,7 @@
               },
               "frame": {
                 "showTitle": true,
-                "title": "Niederschlag gesamt"
+                "title": "Niederschlag"
               }
             }
           },
@@ -455,7 +451,7 @@
               "encodings": {
                 "value": {
                   "fieldName": "sum(sonnenstunden)",
-                  "displayName": "Sonnenstunden gesamt",
+                  "displayName": "Sonnenscheindauer",
                   "format": {
                     "type": "number-plain",
                     "decimalPlaces": {
@@ -468,7 +464,7 @@
               },
               "frame": {
                 "showTitle": true,
-                "title": "Sonnenstunden gesamt"
+                "title": "Sonnenscheindauer"
               }
             }
           },
@@ -481,7 +477,7 @@
         },
         {
           "widget": {
-            "name": "chart_temperatur",
+            "name": "verlauf_temperatur",
             "queries": [
               {
                 "name": "main_query",
@@ -489,82 +485,92 @@
                   "datasetName": "ds_wetter",
                   "fields": [
                     {
-                      "name": "daily(datum)",
-                      "expression": "DATE_TRUNC(\"DAY\", `datum`)"
+                      "name": "datum",
+                      "expression": "`datum`"
                     },
                     {
-                      "name": "max(temp_max_c)",
-                      "expression": "MAX(`temp_max_c`)"
+                      "name": "wertart",
+                      "expression": "`wertart`"
                     },
                     {
-                      "name": "avg(temp_avg_c)",
-                      "expression": "AVG(`temp_avg_c`)"
+                      "name": "temp_min_c",
+                      "expression": "`temp_min_c`"
                     },
                     {
-                      "name": "min(temp_min_c)",
-                      "expression": "MIN(`temp_min_c`)"
+                      "name": "temp_max_c",
+                      "expression": "`temp_max_c`"
+                    },
+                    {
+                      "name": "temp_avg_c",
+                      "expression": "`temp_avg_c`"
+                    },
+                    {
+                      "name": "niederschlag_mm",
+                      "expression": "`niederschlag_mm`"
+                    },
+                    {
+                      "name": "niederschlag_wahrsch",
+                      "expression": "`niederschlag_wahrsch`"
+                    },
+                    {
+                      "name": "wind_avg_kmh",
+                      "expression": "`wind_avg_kmh`"
+                    },
+                    {
+                      "name": "boe_max_kmh",
+                      "expression": "`boe_max_kmh`"
                     }
                   ],
-                  "disaggregated": false
+                  "disaggregated": true
                 }
               }
             ],
             "spec": {
-              "version": 3,
-              "widgetType": "line",
-              "encodings": {
-                "x": {
-                  "fieldName": "daily(datum)",
-                  "scale": {
-                    "type": "temporal"
-                  },
-                  "displayName": "Datum"
-                },
-                "y": {
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "axis": {
-                    "title": "Temperatur (°C)"
-                  },
-                  "fields": [
-                    {
-                      "fieldName": "max(temp_max_c)",
-                      "displayName": "Höchstwert (°C)"
-                    },
-                    {
-                      "fieldName": "avg(temp_avg_c)",
-                      "displayName": "Mittelwert (°C)"
-                    },
-                    {
-                      "fieldName": "min(temp_min_c)",
-                      "displayName": "Tiefstwert (°C)"
-                    }
-                  ]
-                }
+              "version": 1,
+              "widgetType": "custom-vega-viz",
+              "jsonSpec": {
+                "type": "vega-lite",
+                "spec": "{\"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\", \"width\": \"container\", \"height\": \"container\", \"autosize\": {\"type\": \"fit\", \"contains\": \"padding\"}, \"data\": {\"name\": \"databricks_query\"}, \"transform\": [{\"calculate\": \"time(toDate(datum.datum))\", \"as\": \"ms\"}, {\"aggregate\": [{\"op\": \"min\", \"field\": \"temp_min_c\", \"as\": \"tief\"}, {\"op\": \"max\", \"field\": \"temp_max_c\", \"as\": \"hoch\"}, {\"op\": \"mean\", \"field\": \"temp_avg_c\", \"as\": \"mittel\"}], \"groupby\": [\"ms\", \"wertart\"]}, {\"calculate\": \"utcFormat(datum.ms, '%d.%m.')\", \"as\": \"tag\"}, {\"joinaggregate\": [{\"op\": \"min\", \"field\": \"ms\", \"as\": \"ms_start\"}], \"groupby\": [\"wertart\"]}], \"encoding\": {\"x\": {\"field\": \"tag\", \"type\": \"ordinal\", \"sort\": {\"field\": \"ms\", \"op\": \"min\"}, \"title\": null, \"axis\": {\"labelAngle\": -90, \"ticks\": false}}}, \"layer\": [{\"mark\": {\"type\": \"rule\", \"strokeWidth\": 2, \"color\": \"#7E94B6\"}, \"encoding\": {\"y\": {\"field\": \"tief\", \"type\": \"quantitative\", \"title\": \"°C\", \"scale\": {\"zero\": false}}, \"y2\": {\"field\": \"hoch\"}, \"tooltip\": [{\"field\": \"tag\", \"title\": \"Tag\"}, {\"field\": \"wertart\", \"title\": \"Wertart\"}, {\"field\": \"hoch\", \"type\": \"quantitative\", \"title\": \"Höchstwert (°C)\", \"format\": \".1~f\"}, {\"field\": \"mittel\", \"type\": \"quantitative\", \"title\": \"Mittelwert (°C)\", \"format\": \".1~f\"}, {\"field\": \"tief\", \"type\": \"quantitative\", \"title\": \"Tiefstwert (°C)\", \"format\": \".1~f\"}]}}, {\"mark\": {\"type\": \"point\", \"filled\": true, \"size\": 40, \"fill\": \"#7E94B6\", \"stroke\": \"#7E94B6\", \"strokeWidth\": 1.5, \"opacity\": 1}, \"encoding\": {\"y\": {\"field\": \"hoch\", \"type\": \"quantitative\"}, \"fillOpacity\": {\"condition\": {\"test\": \"datum.wertart === 'Prognose'\", \"value\": 0}, \"value\": 1}}}, {\"mark\": {\"type\": \"point\", \"filled\": true, \"size\": 40, \"fill\": \"#7E94B6\", \"stroke\": \"#7E94B6\", \"strokeWidth\": 1.5, \"opacity\": 1}, \"encoding\": {\"y\": {\"field\": \"tief\", \"type\": \"quantitative\"}, \"fillOpacity\": {\"condition\": {\"test\": \"datum.wertart === 'Prognose'\", \"value\": 0}, \"value\": 1}}}, {\"mark\": {\"type\": \"tick\", \"thickness\": 2, \"size\": 12, \"color\": \"#002D71\"}, \"encoding\": {\"y\": {\"field\": \"mittel\", \"type\": \"quantitative\"}}}, {\"transform\": [{\"filter\": \"datum.wertart === 'Prognose' && datum.ms === datum.ms_start\"}], \"mark\": {\"type\": \"text\", \"text\": \"Prognose ▸\", \"align\": \"left\", \"baseline\": \"top\", \"dx\": -4, \"dy\": 2, \"fontSize\": 12, \"color\": \"#4A4A4A\"}, \"encoding\": {\"y\": {\"value\": 0}}}], \"resolve\": {\"scale\": {\"y\": \"shared\"}}, \"config\": {\"view\": {\"stroke\": null}, \"axis\": {\"labelColor\": \"#4A4A4A\", \"titleColor\": \"#4A4A4A\", \"gridColor\": \"#E5E5E5\", \"domainColor\": \"#D8DBDF\"}, \"axisY\": {\"titleAngle\": 0, \"titleAlign\": \"left\", \"titleY\": -12, \"titleX\": 0}, \"locale\": {\"number\": {\"decimal\": \",\", \"thousands\": \".\", \"grouping\": [3], \"currency\": [\"\", \" €\"]}}}}"
               },
-              "annotations": [
-                {
-                  "type": "vertical-line",
-                  "encodings": {
-                    "x": {
-                      "dataValue": "2024-07-12T00:00:00.000",
-                      "dataType": "DATETIME"
-                    },
-                    "label": {
-                      "value": "Beginn Prognose"
-                    },
-                    "color": {
-                      "value": {
-                        "hex": "#7F7F7F"
-                      }
-                    }
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "datum"
+                  },
+                  {
+                    "fieldName": "wertart"
+                  },
+                  {
+                    "fieldName": "temp_min_c"
+                  },
+                  {
+                    "fieldName": "temp_max_c"
+                  },
+                  {
+                    "fieldName": "temp_avg_c"
+                  },
+                  {
+                    "fieldName": "niederschlag_mm"
+                  },
+                  {
+                    "fieldName": "niederschlag_wahrsch"
+                  },
+                  {
+                    "fieldName": "wind_avg_kmh"
+                  },
+                  {
+                    "fieldName": "boe_max_kmh"
                   }
-                }
-              ],
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              },
               "frame": {
                 "showTitle": true,
-                "title": "Temperaturverlauf (°C)"
+                "title": "Temperatur je Tag (°C)",
+                "showDescription": true,
+                "description": "Strecke von Tiefst- bis Höchstwert, Strich: Mittelwert. Hohle Punkte: Prognose."
               }
             }
           },
@@ -577,7 +583,7 @@
         },
         {
           "widget": {
-            "name": "chart_niederschlag",
+            "name": "verlauf_niederschlag",
             "queries": [
               {
                 "name": "main_query",
@@ -585,87 +591,92 @@
                   "datasetName": "ds_wetter",
                   "fields": [
                     {
-                      "name": "daily(datum)",
-                      "expression": "DATE_TRUNC(\"DAY\", `datum`)"
+                      "name": "datum",
+                      "expression": "`datum`"
                     },
                     {
-                      "name": "sum(niederschlag_mm)",
-                      "expression": "SUM(`niederschlag_mm`)"
+                      "name": "wertart",
+                      "expression": "`wertart`"
                     },
                     {
-                      "name": "datenart",
-                      "expression": "`datenart`"
+                      "name": "temp_min_c",
+                      "expression": "`temp_min_c`"
+                    },
+                    {
+                      "name": "temp_max_c",
+                      "expression": "`temp_max_c`"
+                    },
+                    {
+                      "name": "temp_avg_c",
+                      "expression": "`temp_avg_c`"
+                    },
+                    {
+                      "name": "niederschlag_mm",
+                      "expression": "`niederschlag_mm`"
+                    },
+                    {
+                      "name": "niederschlag_wahrsch",
+                      "expression": "`niederschlag_wahrsch`"
+                    },
+                    {
+                      "name": "wind_avg_kmh",
+                      "expression": "`wind_avg_kmh`"
+                    },
+                    {
+                      "name": "boe_max_kmh",
+                      "expression": "`boe_max_kmh`"
                     }
                   ],
-                  "disaggregated": false
+                  "disaggregated": true
                 }
               }
             ],
             "spec": {
-              "version": 3,
-              "widgetType": "bar",
-              "encodings": {
-                "x": {
-                  "fieldName": "daily(datum)",
-                  "scale": {
-                    "type": "temporal"
-                  },
-                  "displayName": "Datum"
-                },
-                "y": {
-                  "fieldName": "sum(niederschlag_mm)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "displayName": "Niederschlag (mm)",
-                  "format": {
-                    "type": "number-plain",
-                    "decimalPlaces": {
-                      "type": "max",
-                      "places": 1
-                    }
-                  }
-                },
-                "color": {
-                  "fieldName": "datenart",
-                  "displayName": "Datenart",
-                  "scale": {
-                    "type": "categorical",
-                    "mappings": [
-                      {
-                        "value": "Historie",
-                        "color": "#0072B2"
-                      },
-                      {
-                        "value": "Prognose",
-                        "color": "#E69F00"
-                      }
-                    ]
-                  }
-                }
+              "version": 1,
+              "widgetType": "custom-vega-viz",
+              "jsonSpec": {
+                "type": "vega-lite",
+                "spec": "{\"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\", \"width\": \"container\", \"height\": \"container\", \"autosize\": {\"type\": \"fit\", \"contains\": \"padding\"}, \"data\": {\"name\": \"databricks_query\"}, \"transform\": [{\"calculate\": \"time(toDate(datum.datum))\", \"as\": \"ms\"}, {\"aggregate\": [{\"op\": \"mean\", \"field\": \"niederschlag_mm\", \"as\": \"niederschlag\"}, {\"op\": \"mean\", \"field\": \"niederschlag_wahrsch\", \"as\": \"wahrsch\"}], \"groupby\": [\"ms\", \"wertart\"]}, {\"calculate\": \"utcFormat(datum.ms, '%d.%m.')\", \"as\": \"tag\"}, {\"joinaggregate\": [{\"op\": \"min\", \"field\": \"ms\", \"as\": \"ms_start\"}], \"groupby\": [\"wertart\"]}], \"encoding\": {\"x\": {\"field\": \"tag\", \"type\": \"ordinal\", \"sort\": {\"field\": \"ms\", \"op\": \"min\"}, \"title\": null, \"axis\": {\"labelAngle\": -90, \"ticks\": false}}}, \"layer\": [{\"mark\": {\"type\": \"bar\", \"color\": \"#7E94B6\", \"stroke\": \"#7E94B6\", \"strokeWidth\": 1.5, \"width\": {\"band\": 0.7}}, \"encoding\": {\"y\": {\"field\": \"niederschlag\", \"type\": \"quantitative\", \"title\": \"mm\"}, \"fillOpacity\": {\"condition\": {\"test\": \"datum.wertart === 'Prognose'\", \"value\": 0}, \"value\": 1}, \"strokeOpacity\": {\"condition\": {\"test\": \"datum.niederschlag === 0\", \"value\": 0}, \"value\": 1}, \"tooltip\": [{\"field\": \"tag\", \"title\": \"Tag\"}, {\"field\": \"wertart\", \"title\": \"Wertart\"}, {\"field\": \"niederschlag\", \"type\": \"quantitative\", \"title\": \"Niederschlag (mm)\", \"format\": \".1~f\"}, {\"field\": \"wahrsch\", \"type\": \"quantitative\", \"title\": \"Niederschlagswahrscheinlichkeit\", \"format\": \".0%\"}]}}, {\"transform\": [{\"filter\": \"datum.wertart === 'Prognose' && datum.ms === datum.ms_start\"}], \"mark\": {\"type\": \"text\", \"text\": \"Prognose ▸\", \"align\": \"left\", \"baseline\": \"top\", \"dx\": -4, \"dy\": 2, \"fontSize\": 12, \"color\": \"#4A4A4A\"}, \"encoding\": {\"y\": {\"value\": 0}}}], \"resolve\": {\"scale\": {\"y\": \"shared\"}}, \"config\": {\"view\": {\"stroke\": null}, \"axis\": {\"labelColor\": \"#4A4A4A\", \"titleColor\": \"#4A4A4A\", \"gridColor\": \"#E5E5E5\", \"domainColor\": \"#D8DBDF\"}, \"axisY\": {\"titleAngle\": 0, \"titleAlign\": \"left\", \"titleY\": -12, \"titleX\": 0}, \"locale\": {\"number\": {\"decimal\": \",\", \"thousands\": \".\", \"grouping\": [3], \"currency\": [\"\", \" €\"]}}}}"
               },
-              "annotations": [
-                {
-                  "type": "vertical-line",
-                  "encodings": {
-                    "x": {
-                      "dataValue": "2024-07-12T00:00:00.000",
-                      "dataType": "DATETIME"
-                    },
-                    "label": {
-                      "value": "Beginn Prognose"
-                    },
-                    "color": {
-                      "value": {
-                        "hex": "#7F7F7F"
-                      }
-                    }
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "datum"
+                  },
+                  {
+                    "fieldName": "wertart"
+                  },
+                  {
+                    "fieldName": "temp_min_c"
+                  },
+                  {
+                    "fieldName": "temp_max_c"
+                  },
+                  {
+                    "fieldName": "temp_avg_c"
+                  },
+                  {
+                    "fieldName": "niederschlag_mm"
+                  },
+                  {
+                    "fieldName": "niederschlag_wahrsch"
+                  },
+                  {
+                    "fieldName": "wind_avg_kmh"
+                  },
+                  {
+                    "fieldName": "boe_max_kmh"
                   }
-                }
-              ],
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              },
               "frame": {
                 "showTitle": true,
-                "title": "Niederschlag je Tag (mm)"
+                "title": "Niederschlag je Tag (mm)",
+                "showDescription": true,
+                "description": "Hohle Säulen: Prognose."
               }
             }
           },
@@ -678,7 +689,7 @@
         },
         {
           "widget": {
-            "name": "chart_wind",
+            "name": "verlauf_wind",
             "queries": [
               {
                 "name": "main_query",
@@ -686,74 +697,92 @@
                   "datasetName": "ds_wetter",
                   "fields": [
                     {
-                      "name": "daily(datum)",
-                      "expression": "DATE_TRUNC(\"DAY\", `datum`)"
+                      "name": "datum",
+                      "expression": "`datum`"
                     },
                     {
-                      "name": "avg(wind_avg_kmh)",
-                      "expression": "AVG(`wind_avg_kmh`)"
+                      "name": "wertart",
+                      "expression": "`wertart`"
                     },
                     {
-                      "name": "max(boe_max_kmh)",
-                      "expression": "MAX(`boe_max_kmh`)"
+                      "name": "temp_min_c",
+                      "expression": "`temp_min_c`"
+                    },
+                    {
+                      "name": "temp_max_c",
+                      "expression": "`temp_max_c`"
+                    },
+                    {
+                      "name": "temp_avg_c",
+                      "expression": "`temp_avg_c`"
+                    },
+                    {
+                      "name": "niederschlag_mm",
+                      "expression": "`niederschlag_mm`"
+                    },
+                    {
+                      "name": "niederschlag_wahrsch",
+                      "expression": "`niederschlag_wahrsch`"
+                    },
+                    {
+                      "name": "wind_avg_kmh",
+                      "expression": "`wind_avg_kmh`"
+                    },
+                    {
+                      "name": "boe_max_kmh",
+                      "expression": "`boe_max_kmh`"
                     }
                   ],
-                  "disaggregated": false
+                  "disaggregated": true
                 }
               }
             ],
             "spec": {
-              "version": 3,
-              "widgetType": "line",
-              "encodings": {
-                "x": {
-                  "fieldName": "daily(datum)",
-                  "scale": {
-                    "type": "temporal"
-                  },
-                  "displayName": "Datum"
-                },
-                "y": {
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "axis": {
-                    "title": "Geschwindigkeit (km/h)"
-                  },
-                  "fields": [
-                    {
-                      "fieldName": "avg(wind_avg_kmh)",
-                      "displayName": "Ø Wind (km/h)"
-                    },
-                    {
-                      "fieldName": "max(boe_max_kmh)",
-                      "displayName": "Max. Böe (km/h)"
-                    }
-                  ]
-                }
+              "version": 1,
+              "widgetType": "custom-vega-viz",
+              "jsonSpec": {
+                "type": "vega-lite",
+                "spec": "{\"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\", \"width\": \"container\", \"height\": \"container\", \"autosize\": {\"type\": \"fit\", \"contains\": \"padding\"}, \"data\": {\"name\": \"databricks_query\"}, \"transform\": [{\"calculate\": \"time(toDate(datum.datum))\", \"as\": \"ms\"}, {\"aggregate\": [{\"op\": \"mean\", \"field\": \"wind_avg_kmh\", \"as\": \"wind\"}, {\"op\": \"max\", \"field\": \"boe_max_kmh\", \"as\": \"boe\"}], \"groupby\": [\"ms\", \"wertart\"]}, {\"calculate\": \"utcFormat(datum.ms, '%d.%m.')\", \"as\": \"tag\"}, {\"joinaggregate\": [{\"op\": \"min\", \"field\": \"ms\", \"as\": \"ms_start\"}], \"groupby\": [\"wertart\"]}], \"encoding\": {\"x\": {\"field\": \"tag\", \"type\": \"ordinal\", \"sort\": {\"field\": \"ms\", \"op\": \"min\"}, \"title\": null, \"axis\": {\"labelAngle\": -90, \"ticks\": false}}}, \"layer\": [{\"mark\": {\"type\": \"bar\", \"color\": \"#7E94B6\", \"stroke\": \"#7E94B6\", \"strokeWidth\": 1.5, \"width\": {\"band\": 0.7}}, \"encoding\": {\"y\": {\"field\": \"wind\", \"type\": \"quantitative\", \"title\": \"km/h\"}, \"fillOpacity\": {\"condition\": {\"test\": \"datum.wertart === 'Prognose'\", \"value\": 0}, \"value\": 1}, \"strokeOpacity\": {\"condition\": {\"test\": \"datum.wind === 0\", \"value\": 0}, \"value\": 1}, \"tooltip\": [{\"field\": \"tag\", \"title\": \"Tag\"}, {\"field\": \"wertart\", \"title\": \"Wertart\"}, {\"field\": \"wind\", \"type\": \"quantitative\", \"title\": \"Ø Windgeschwindigkeit (km/h)\", \"format\": \".1~f\"}, {\"field\": \"boe\", \"type\": \"quantitative\", \"title\": \"Stärkste Böe (km/h)\", \"format\": \".1~f\"}]}}, {\"mark\": {\"type\": \"tick\", \"thickness\": 2, \"size\": 12, \"color\": \"#002D71\"}, \"encoding\": {\"y\": {\"field\": \"boe\", \"type\": \"quantitative\"}, \"tooltip\": [{\"field\": \"tag\", \"title\": \"Tag\"}, {\"field\": \"wertart\", \"title\": \"Wertart\"}, {\"field\": \"boe\", \"type\": \"quantitative\", \"title\": \"Stärkste Böe (km/h)\", \"format\": \".1~f\"}]}}, {\"transform\": [{\"filter\": \"datum.wertart === 'Prognose' && datum.ms === datum.ms_start\"}], \"mark\": {\"type\": \"text\", \"text\": \"Prognose ▸\", \"align\": \"left\", \"baseline\": \"top\", \"dx\": -4, \"dy\": 2, \"fontSize\": 12, \"color\": \"#4A4A4A\"}, \"encoding\": {\"y\": {\"value\": 0}}}], \"resolve\": {\"scale\": {\"y\": \"shared\"}}, \"config\": {\"view\": {\"stroke\": null}, \"axis\": {\"labelColor\": \"#4A4A4A\", \"titleColor\": \"#4A4A4A\", \"gridColor\": \"#E5E5E5\", \"domainColor\": \"#D8DBDF\"}, \"axisY\": {\"titleAngle\": 0, \"titleAlign\": \"left\", \"titleY\": -12, \"titleX\": 0}, \"locale\": {\"number\": {\"decimal\": \",\", \"thousands\": \".\", \"grouping\": [3], \"currency\": [\"\", \" €\"]}}}}"
               },
-              "annotations": [
-                {
-                  "type": "vertical-line",
-                  "encodings": {
-                    "x": {
-                      "dataValue": "2024-07-12T00:00:00.000",
-                      "dataType": "DATETIME"
-                    },
-                    "label": {
-                      "value": "Beginn Prognose"
-                    },
-                    "color": {
-                      "value": {
-                        "hex": "#7F7F7F"
-                      }
-                    }
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "datum"
+                  },
+                  {
+                    "fieldName": "wertart"
+                  },
+                  {
+                    "fieldName": "temp_min_c"
+                  },
+                  {
+                    "fieldName": "temp_max_c"
+                  },
+                  {
+                    "fieldName": "temp_avg_c"
+                  },
+                  {
+                    "fieldName": "niederschlag_mm"
+                  },
+                  {
+                    "fieldName": "niederschlag_wahrsch"
+                  },
+                  {
+                    "fieldName": "wind_avg_kmh"
+                  },
+                  {
+                    "fieldName": "boe_max_kmh"
                   }
-                }
-              ],
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              },
               "frame": {
                 "showTitle": true,
-                "title": "Wind (km/h)"
+                "title": "Wind je Tag (km/h)",
+                "showDescription": true,
+                "description": "Säule: Ø Windgeschwindigkeit, Strich: stärkste Böe. Hohle Säulen: Prognose."
               }
             }
           },
@@ -814,21 +843,24 @@
                     "colorRamp": {
                       "mode": "custom-sequential",
                       "colors": {
-                        "start": "#2C7BB6",
-                        "end": "#D7191C"
+                        "start": "#D9E0EA",
+                        "end": "#002D71"
                       }
                     }
+                  },
+                  "legend": {
+                    "hide": true
                   }
                 }
               },
               "mark": {
-                "opacity": 0.85
+                "opacity": 0.9
               },
               "frame": {
                 "showTitle": true,
-                "title": "Europakarte: Ø Temperatur (°C)",
+                "title": "Ø Temperatur je Stadt (°C)",
                 "showDescription": true,
-                "description": "Alle Städte, unabhängig vom Stadtfilter"
+                "description": "Je dunkler, desto wärmer. Alle Städte, unabhängig vom Stadtfilter."
               }
             }
           },
@@ -841,7 +873,7 @@
         },
         {
           "widget": {
-            "name": "ranking_temperatur",
+            "name": "rang_temperatur",
             "queries": [
               {
                 "name": "main_query",
@@ -895,9 +927,9 @@
               },
               "frame": {
                 "showTitle": true,
-                "title": "Städtevergleich: Ø Temperatur (°C)",
+                "title": "Rangfolge: Ø Temperatur je Stadt (°C)",
                 "showDescription": true,
-                "description": "Alle Städte, unabhängig vom Stadtfilter"
+                "description": "Alle Städte, unabhängig vom Stadtfilter."
               }
             }
           },
@@ -922,8 +954,8 @@
                       "expression": "`datum`"
                     },
                     {
-                      "name": "datenart",
-                      "expression": "`datenart`"
+                      "name": "wertart",
+                      "expression": "`wertart`"
                     },
                     {
                       "name": "stadt",
@@ -946,8 +978,8 @@
                       "expression": "`niederschlag_wahrsch`"
                     },
                     {
-                      "name": "niederschlag_typ",
-                      "expression": "`niederschlag_typ`"
+                      "name": "niederschlag_art",
+                      "expression": "`niederschlag_art`"
                     },
                     {
                       "name": "wind_avg_kmh",
@@ -988,8 +1020,8 @@
                     "displayName": "Datum"
                   },
                   {
-                    "fieldName": "datenart",
-                    "displayName": "Datenart"
+                    "fieldName": "wertart",
+                    "displayName": "Wertart"
                   },
                   {
                     "fieldName": "stadt",
@@ -997,7 +1029,7 @@
                   },
                   {
                     "fieldName": "temp_min_c",
-                    "displayName": "Min. (°C)",
+                    "displayName": "Tiefstwert (°C)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1008,7 +1040,7 @@
                   },
                   {
                     "fieldName": "temp_max_c",
-                    "displayName": "Max. (°C)",
+                    "displayName": "Höchstwert (°C)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1030,7 +1062,7 @@
                   },
                   {
                     "fieldName": "niederschlag_wahrsch",
-                    "displayName": "Regenwahrsch. (%)",
+                    "displayName": "Niederschlagswahrscheinlichkeit (%)",
                     "format": {
                       "type": "number-percent",
                       "decimalPlaces": {
@@ -1040,12 +1072,12 @@
                     }
                   },
                   {
-                    "fieldName": "niederschlag_typ",
-                    "displayName": "Art"
+                    "fieldName": "niederschlag_art",
+                    "displayName": "Niederschlagsart"
                   },
                   {
                     "fieldName": "wind_avg_kmh",
-                    "displayName": "Ø Wind (km/h)",
+                    "displayName": "Ø Windgeschwindigkeit (km/h)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1056,7 +1088,7 @@
                   },
                   {
                     "fieldName": "boe_max_kmh",
-                    "displayName": "Max. Böe (km/h)",
+                    "displayName": "Stärkste Böe (km/h)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1067,11 +1099,11 @@
                   },
                   {
                     "fieldName": "luftfeuchte_pct",
-                    "displayName": "Luftfeuchte (%)"
+                    "displayName": "Relative Luftfeuchte (%)"
                   },
                   {
                     "fieldName": "luftdruck_hpa",
-                    "displayName": "Luftdruck (hPa)",
+                    "displayName": "Luftdruck auf Meereshöhe (hPa)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1082,7 +1114,7 @@
                   },
                   {
                     "fieldName": "uv_max",
-                    "displayName": "UV-Index max.",
+                    "displayName": "UV-Index (Höchstwert)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1093,7 +1125,7 @@
                   },
                   {
                     "fieldName": "sonnenstunden",
-                    "displayName": "Sonne (h)",
+                    "displayName": "Sonnenscheindauer (h)",
                     "format": {
                       "type": "number-plain",
                       "decimalPlaces": {
@@ -1116,6 +1148,22 @@
             "width": 12,
             "height": 7
           }
+        },
+        {
+          "widget": {
+            "name": "fussnote",
+            "multilineTextboxSpec": {
+              "lines": [
+                "Quelle: Databricks samples.accuweather (AccuWeather), Tageswerte. Einheiten: °C, mm, km/h, hPa, h. Wind aus m/s umgerechnet (× 3,6), Luftdruck aus Pa (÷ 100). Luftdruck nur im Ist, Niederschlagswahrscheinlichkeit nur in der Prognose. Sind mehrere Städte gewählt, zeigen die Zeitverläufe je Tag den Tiefst- und Höchstwert sowie den Mittelwert über die Städte.\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 31,
+            "width": 12,
+            "height": 2
+          }
         }
       ]
     }
@@ -1123,7 +1171,7 @@
   "uiSettings": {
     "theme": {
       "canvasBackgroundColor": {
-        "light": "#F7F9FB",
+        "light": "#F6F6F6",
         "dark": "#1F272D"
       },
       "widgetBackgroundColor": {
@@ -1135,21 +1183,18 @@
         "dark": "#11171C"
       },
       "fontColor": {
-        "light": "#11171C",
-        "dark": "#E8ECF0"
+        "light": "#4A4A4A",
+        "dark": "#E5E5E5"
       },
       "selectionColor": {
-        "light": "#2272B4",
-        "dark": "#8ACAFF"
+        "light": "#4A4A4A",
+        "dark": "#ABABAB"
       },
       "visualizationColors": [
-        "#D55E00",
-        "#E69F00",
-        "#0072B2",
-        "#009E73",
-        "#CC79A7",
-        "#56B4E9",
-        "#F0E442"
+        "#7E94B6",
+        "#4C6C9A",
+        "#002D71",
+        "#99AAC4"
       ],
       "widgetHeaderAlignment": "LEFT"
     }
