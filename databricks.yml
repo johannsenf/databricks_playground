@@ -11,6 +11,10 @@ variables:
   schema:
     description: Unity Catalog schema
     default: default
+  warehouse_id:
+    description: SQL warehouse for dashboards
+    lookup:
+      warehouse: Serverless Starter Warehouse
 
 targets:
   dev:

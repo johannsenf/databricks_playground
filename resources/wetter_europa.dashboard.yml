@@ -1,0 +1,8 @@
+resources:
+  dashboards:
+    wetter_europa:
+      display_name: Wetterbericht Europa
+      file_path: ../src/dashboards/wetter_europa.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      dataset_catalog: samples
+      dataset_schema: accuweather

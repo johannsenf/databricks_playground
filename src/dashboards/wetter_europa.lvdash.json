@@ -1,0 +1,1157 @@
+{
+  "datasets": [
+    {
+      "name": "ds_wetter",
+      "displayName": "Wetter Europa (Tage)",
+      "queryLines": [
+        "SELECT 'Historie' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "  latitude, longitude,\n",
+        "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  CAST(NULL AS DOUBLE) AS niederschlag_wahrsch,\n",
+        "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
+        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
+        "  ROUND(pressure_msl_avg / 100.0, 1) AS luftdruck_hpa\n",
+        "FROM historical_daily_calendar_metric\n",
+        "WHERE country_code IN ('de','es','fr','gb','gr','is','nl','rs','ru','se','tr') AND date < (SELECT MIN(date) FROM forecast_daily_calendar_metric)\n",
+        "UNION ALL\n",
+        "SELECT 'Prognose' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "  latitude, longitude,\n",
+        "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  precipitation_probability / 100.0 AS niederschlag_wahrsch,\n",
+        "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
+        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
+        "  CAST(NULL AS DOUBLE) AS luftdruck_hpa\n",
+        "FROM forecast_daily_calendar_metric\n",
+        "WHERE country_code IN ('de','es','fr','gb','gr','is','nl','rs','ru','se','tr') \n"
+      ]
+    },
+    {
+      "name": "ds_staedte",
+      "displayName": "Wetter Europa (Städtevergleich)",
+      "queryLines": [
+        "SELECT 'Historie' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "  latitude, longitude,\n",
+        "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  CAST(NULL AS DOUBLE) AS niederschlag_wahrsch,\n",
+        "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
+        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
+        "  ROUND(pressure_msl_avg / 100.0, 1) AS luftdruck_hpa\n",
+        "FROM historical_daily_calendar_metric\n",
+        "WHERE country_code IN ('de','es','fr','gb','gr','is','nl','rs','ru','se','tr') AND date < (SELECT MIN(date) FROM forecast_daily_calendar_metric)\n",
+        "UNION ALL\n",
+        "SELECT 'Prognose' AS datenart, date AS datum, CASE city_name WHEN 'berlin' THEN 'Berlin' WHEN 'madrid' THEN 'Madrid' WHEN 'paris' THEN 'Paris' WHEN 'london' THEN 'London' WHEN 'athens' THEN 'Athen' WHEN 'reykjavik' THEN 'Reykjavík' WHEN 'amsterdam' THEN 'Amsterdam' WHEN 'belgrade' THEN 'Belgrad' WHEN 'moscow' THEN 'Moskau' WHEN 'stockholm' THEN 'Stockholm' WHEN 'istanbul' THEN 'Istanbul' END AS stadt, CASE country_code WHEN 'de' THEN 'Deutschland' WHEN 'es' THEN 'Spanien' WHEN 'fr' THEN 'Frankreich' WHEN 'gb' THEN 'Vereinigtes Königreich' WHEN 'gr' THEN 'Griechenland' WHEN 'is' THEN 'Island' WHEN 'nl' THEN 'Niederlande' WHEN 'rs' THEN 'Serbien' WHEN 'ru' THEN 'Russland' WHEN 'se' THEN 'Schweden' WHEN 'tr' THEN 'Türkei' END AS land,\n",
+        "  latitude, longitude,\n",
+        "  ROUND(temperature_min, 1) AS temp_min_c, ROUND(temperature_max, 1) AS temp_max_c,\n",
+        "  ROUND(temperature_avg, 1) AS temp_avg_c, ROUND(temperature_realfeel_avg, 1) AS gefuehlt_avg_c,\n",
+        "  ROUND(precipitation_lwe_total, 1) AS niederschlag_mm, ROUND(COALESCE(snow_lwe_total, 0), 1) AS schnee_mm,\n",
+        "  CASE lower(precipitation_type_desc_predominant) WHEN 'rain' THEN 'Regen' WHEN 'snow' THEN 'Schnee' WHEN 'ice' THEN 'Eis' WHEN 'mixed' THEN 'Gemischt' ELSE 'kein' END AS niederschlag_typ,\n",
+        "  precipitation_probability / 100.0 AS niederschlag_wahrsch,\n",
+        "  ROUND(wind_speed_avg * 3.6, 1) AS wind_avg_kmh, ROUND(wind_gust_max * 3.6, 1) AS boe_max_kmh,\n",
+        "  ROUND(wind_direction_avg, 0) AS windrichtung_grad,\n",
+        "  ROUND(humidity_relative_avg, 0) AS luftfeuchte_pct, cloud_cover_perc_avg AS bewoelkung_pct,\n",
+        "  ROUND(index_uv_max, 1) AS uv_max, ROUND(minutes_of_sun_total / 60.0, 1) AS sonnenstunden,\n",
+        "  CAST(NULL AS DOUBLE) AS luftdruck_hpa\n",
+        "FROM forecast_daily_calendar_metric\n",
+        "WHERE country_code IN ('de','es','fr','gb','gr','is','nl','rs','ru','se','tr') \n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "wetterbericht",
+      "displayName": "Wetterbericht",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "titel",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Wetterbericht Europa\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "untertitel",
+            "multilineTextboxSpec": {
+              "lines": [
+                "Tageshistorie (27.06.–11.07.2024) und 15-Tage-Prognose (ab 12.07.2024) für 11 europäische Großstädte · Quelle: `samples.accuweather` · Einheiten: °C, mm, km/h, hPa, h\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_stadt",
+            "queries": [
+              {
+                "name": "filter_stadt_ds_wetter",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "stadt",
+                      "expression": "`stadt`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "stadt",
+                    "displayName": "Stadt",
+                    "queryName": "filter_stadt_ds_wetter"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Stadt"
+              },
+              "selection": {
+                "defaultSelection": {
+                  "values": {
+                    "dataType": "STRING",
+                    "values": [
+                      {
+                        "value": "Berlin"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_datenart",
+            "queries": [
+              {
+                "name": "filter_datenart_ds_wetter",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "datenart",
+                      "expression": "`datenart`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "filter_datenart_ds_staedte",
+                "query": {
+                  "datasetName": "ds_staedte",
+                  "fields": [
+                    {
+                      "name": "datenart",
+                      "expression": "`datenart`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "datenart",
+                    "displayName": "Datenart",
+                    "queryName": "filter_datenart_ds_wetter"
+                  },
+                  {
+                    "fieldName": "datenart",
+                    "displayName": "Datenart",
+                    "queryName": "filter_datenart_ds_staedte"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Datenart"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 2,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_datum",
+            "queries": [
+              {
+                "name": "filter_datum_ds_wetter",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "datum",
+                      "expression": "`datum`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "filter_datum_ds_staedte",
+                "query": {
+                  "datasetName": "ds_staedte",
+                  "fields": [
+                    {
+                      "name": "datum",
+                      "expression": "`datum`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "datum",
+                    "displayName": "Zeitraum",
+                    "queryName": "filter_datum_ds_wetter"
+                  },
+                  {
+                    "fieldName": "datum",
+                    "displayName": "Zeitraum",
+                    "queryName": "filter_datum_ds_staedte"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Zeitraum"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 2,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_temp",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "avg(temp_avg_c)",
+                      "expression": "AVG(`temp_avg_c`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(temp_avg_c)",
+                  "displayName": "Ø Temperatur",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  },
+                  "formatTemplate": "{{ @formatted }} °C"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Ø Temperatur"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_niederschlag",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "sum(niederschlag_mm)",
+                      "expression": "SUM(`niederschlag_mm`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(niederschlag_mm)",
+                  "displayName": "Niederschlag gesamt",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  },
+                  "formatTemplate": "{{ @formatted }} mm"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Niederschlag gesamt"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_boe",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "max(boe_max_kmh)",
+                      "expression": "MAX(`boe_max_kmh`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(boe_max_kmh)",
+                  "displayName": "Stärkste Böe",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  },
+                  "formatTemplate": "{{ @formatted }} km/h"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Stärkste Böe"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_sonne",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "sum(sonnenstunden)",
+                      "expression": "SUM(`sonnenstunden`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(sonnenstunden)",
+                  "displayName": "Sonnenstunden gesamt",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  },
+                  "formatTemplate": "{{ @formatted }} h"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Sonnenstunden gesamt"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "chart_temperatur",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "daily(datum)",
+                      "expression": "DATE_TRUNC(\"DAY\", `datum`)"
+                    },
+                    {
+                      "name": "max(temp_max_c)",
+                      "expression": "MAX(`temp_max_c`)"
+                    },
+                    {
+                      "name": "avg(temp_avg_c)",
+                      "expression": "AVG(`temp_avg_c`)"
+                    },
+                    {
+                      "name": "min(temp_min_c)",
+                      "expression": "MIN(`temp_min_c`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(datum)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Datum"
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "Temperatur (°C)"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "max(temp_max_c)",
+                      "displayName": "Höchstwert (°C)"
+                    },
+                    {
+                      "fieldName": "avg(temp_avg_c)",
+                      "displayName": "Mittelwert (°C)"
+                    },
+                    {
+                      "fieldName": "min(temp_min_c)",
+                      "displayName": "Tiefstwert (°C)"
+                    }
+                  ]
+                }
+              },
+              "annotations": [
+                {
+                  "type": "vertical-line",
+                  "encodings": {
+                    "x": {
+                      "dataValue": "2024-07-12T00:00:00.000",
+                      "dataType": "DATETIME"
+                    },
+                    "label": {
+                      "value": "Beginn Prognose"
+                    },
+                    "color": {
+                      "value": {
+                        "hex": "#7F7F7F"
+                      }
+                    }
+                  }
+                }
+              ],
+              "frame": {
+                "showTitle": true,
+                "title": "Temperaturverlauf (°C)"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "chart_niederschlag",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "daily(datum)",
+                      "expression": "DATE_TRUNC(\"DAY\", `datum`)"
+                    },
+                    {
+                      "name": "sum(niederschlag_mm)",
+                      "expression": "SUM(`niederschlag_mm`)"
+                    },
+                    {
+                      "name": "datenart",
+                      "expression": "`datenart`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(datum)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Datum"
+                },
+                "y": {
+                  "fieldName": "sum(niederschlag_mm)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Niederschlag (mm)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "datenart",
+                  "displayName": "Datenart",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Historie",
+                        "color": "#0072B2"
+                      },
+                      {
+                        "value": "Prognose",
+                        "color": "#E69F00"
+                      }
+                    ]
+                  }
+                }
+              },
+              "annotations": [
+                {
+                  "type": "vertical-line",
+                  "encodings": {
+                    "x": {
+                      "dataValue": "2024-07-12T00:00:00.000",
+                      "dataType": "DATETIME"
+                    },
+                    "label": {
+                      "value": "Beginn Prognose"
+                    },
+                    "color": {
+                      "value": {
+                        "hex": "#7F7F7F"
+                      }
+                    }
+                  }
+                }
+              ],
+              "frame": {
+                "showTitle": true,
+                "title": "Niederschlag je Tag (mm)"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "chart_wind",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "daily(datum)",
+                      "expression": "DATE_TRUNC(\"DAY\", `datum`)"
+                    },
+                    {
+                      "name": "avg(wind_avg_kmh)",
+                      "expression": "AVG(`wind_avg_kmh`)"
+                    },
+                    {
+                      "name": "max(boe_max_kmh)",
+                      "expression": "MAX(`boe_max_kmh`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(datum)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Datum"
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "Geschwindigkeit (km/h)"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "avg(wind_avg_kmh)",
+                      "displayName": "Ø Wind (km/h)"
+                    },
+                    {
+                      "fieldName": "max(boe_max_kmh)",
+                      "displayName": "Max. Böe (km/h)"
+                    }
+                  ]
+                }
+              },
+              "annotations": [
+                {
+                  "type": "vertical-line",
+                  "encodings": {
+                    "x": {
+                      "dataValue": "2024-07-12T00:00:00.000",
+                      "dataType": "DATETIME"
+                    },
+                    "label": {
+                      "value": "Beginn Prognose"
+                    },
+                    "color": {
+                      "value": {
+                        "hex": "#7F7F7F"
+                      }
+                    }
+                  }
+                }
+              ],
+              "frame": {
+                "showTitle": true,
+                "title": "Wind (km/h)"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 13,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "karte_temperatur",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_staedte",
+                  "fields": [
+                    {
+                      "name": "latitude",
+                      "expression": "`latitude`"
+                    },
+                    {
+                      "name": "longitude",
+                      "expression": "`longitude`"
+                    },
+                    {
+                      "name": "stadt",
+                      "expression": "`stadt`"
+                    },
+                    {
+                      "name": "avg(temp_avg_c)",
+                      "expression": "AVG(`temp_avg_c`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "symbol-map",
+              "encodings": {
+                "coordinates": {
+                  "latitude": {
+                    "fieldName": "latitude"
+                  },
+                  "longitude": {
+                    "fieldName": "longitude"
+                  }
+                },
+                "color": {
+                  "fieldName": "avg(temp_avg_c)",
+                  "displayName": "Ø Temperatur (°C)",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "custom-sequential",
+                      "colors": {
+                        "start": "#2C7BB6",
+                        "end": "#D7191C"
+                      }
+                    }
+                  }
+                }
+              },
+              "mark": {
+                "opacity": 0.85
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Europakarte: Ø Temperatur (°C)",
+                "showDescription": true,
+                "description": "Alle Städte, unabhängig vom Stadtfilter"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 18,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "ranking_temperatur",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_staedte",
+                  "fields": [
+                    {
+                      "name": "stadt",
+                      "expression": "`stadt`"
+                    },
+                    {
+                      "name": "avg(temp_avg_c)",
+                      "expression": "AVG(`temp_avg_c`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "avg(temp_avg_c)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Ø Temperatur (°C)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "stadt",
+                  "displayName": "Stadt",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Städtevergleich: Ø Temperatur (°C)",
+                "showDescription": true,
+                "description": "Alle Städte, unabhängig vom Stadtfilter"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 18,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "tabelle_tage",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_wetter",
+                  "fields": [
+                    {
+                      "name": "datum",
+                      "expression": "`datum`"
+                    },
+                    {
+                      "name": "datenart",
+                      "expression": "`datenart`"
+                    },
+                    {
+                      "name": "stadt",
+                      "expression": "`stadt`"
+                    },
+                    {
+                      "name": "temp_min_c",
+                      "expression": "`temp_min_c`"
+                    },
+                    {
+                      "name": "temp_max_c",
+                      "expression": "`temp_max_c`"
+                    },
+                    {
+                      "name": "niederschlag_mm",
+                      "expression": "`niederschlag_mm`"
+                    },
+                    {
+                      "name": "niederschlag_wahrsch",
+                      "expression": "`niederschlag_wahrsch`"
+                    },
+                    {
+                      "name": "niederschlag_typ",
+                      "expression": "`niederschlag_typ`"
+                    },
+                    {
+                      "name": "wind_avg_kmh",
+                      "expression": "`wind_avg_kmh`"
+                    },
+                    {
+                      "name": "boe_max_kmh",
+                      "expression": "`boe_max_kmh`"
+                    },
+                    {
+                      "name": "luftfeuchte_pct",
+                      "expression": "`luftfeuchte_pct`"
+                    },
+                    {
+                      "name": "luftdruck_hpa",
+                      "expression": "`luftdruck_hpa`"
+                    },
+                    {
+                      "name": "uv_max",
+                      "expression": "`uv_max`"
+                    },
+                    {
+                      "name": "sonnenstunden",
+                      "expression": "`sonnenstunden`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "datum",
+                    "displayName": "Datum"
+                  },
+                  {
+                    "fieldName": "datenart",
+                    "displayName": "Datenart"
+                  },
+                  {
+                    "fieldName": "stadt",
+                    "displayName": "Stadt"
+                  },
+                  {
+                    "fieldName": "temp_min_c",
+                    "displayName": "Min. (°C)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "temp_max_c",
+                    "displayName": "Max. (°C)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "niederschlag_mm",
+                    "displayName": "Niederschlag (mm)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "niederschlag_wahrsch",
+                    "displayName": "Regenwahrsch. (%)",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "niederschlag_typ",
+                    "displayName": "Art"
+                  },
+                  {
+                    "fieldName": "wind_avg_kmh",
+                    "displayName": "Ø Wind (km/h)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "boe_max_kmh",
+                    "displayName": "Max. Böe (km/h)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "luftfeuchte_pct",
+                    "displayName": "Luftfeuchte (%)"
+                  },
+                  {
+                    "fieldName": "luftdruck_hpa",
+                    "displayName": "Luftdruck (hPa)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "uv_max",
+                    "displayName": "UV-Index max.",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "sonnenstunden",
+                    "displayName": "Sonne (h)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Tageswerte"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 24,
+            "width": 12,
+            "height": 7
+          }
+        }
+      ]
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#F7F9FB",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "widgetBorderColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "fontColor": {
+        "light": "#11171C",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#8ACAFF"
+      },
+      "visualizationColors": [
+        "#D55E00",
+        "#E69F00",
+        "#0072B2",
+        "#009E73",
+        "#CC79A7",
+        "#56B4E9",
+        "#F0E442"
+      ],
+      "widgetHeaderAlignment": "LEFT"
+    }
+  }
+}
