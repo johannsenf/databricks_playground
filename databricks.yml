@@ -1,0 +1,20 @@
+bundle:
+  name: databricks_playground
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog
+    default: main
+  schema:
+    description: Unity Catalog schema
+    default: default
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      host: https://dbc-b6479156-bb01.cloud.databricks.com
